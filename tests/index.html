@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+ <head>
+  <title>Test Suite</title>
+  <link rel="stylesheet" type="text/css" href="../css/jsUnitStyle.css">
+  <script language="javascript" src="jsunit/app/jsUnitCore.js"></script>
+ </head>
+ <body>
+  <script language="javascript">
+
+        function suite() {
+            var testsuite = new top.jsUnitTestSuite();
+
+            testsuite.addTestPage("../testCanvas.html");
+            testsuite.addTestPage("../testFigure.html");
+            testsuite.addTestPage("../testHandle.html");
+            testsuite.addTestPage("../testLocatorHandle.html");
+            testsuite.addTestPage("../testCenterLocator.html");
+            testsuite.addTestPage("../testRectangleFigure.html");
+            testsuite.addTestPage("../testLineFigure.html");
+            testsuite.addTestPage("../testTool.html");
+            testsuite.addTestPage("../testSelectionTool.html");
+
+            testsuite.addTestPage("../testUtil.html");
+
+            return testsuite;
+        }
+        
+  </script>
+
+ </body>
+</html>
+

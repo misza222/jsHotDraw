@@ -1,0 +1,5 @@
+/* 
+ * ServiceLocator class
+ */
+
+function ServiceLocator() {}

@@ -1,0 +1,3 @@
+[submodule "tests/jsunit"]
+	path = tests/jsunit
+	url = git://github.com/pivotal/jsunit.git

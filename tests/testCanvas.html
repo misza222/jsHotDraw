@@ -1,0 +1,275 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+ <head>
+  <title>Test Canvas class</title>
+  <script language="javascript" src="jsunit/app/jsUnitCore.js"></script>
+  <script language="javascript" src="jsmock/jsmock.js"></script>
+  <script language="javascript" src="../util.js"></script>
+  <script language="javascript" src="../Canvas.js"></script>
+  <script language="javascript" src="../Figure.js"></script>
+  <script language="javascript" src="../ServiceLocator.js"></script>
+  <script language="javascript" src="../Logger.js"></script>
+ </head>
+ <body>
+  <script language="javascript">
+      
+      function setUp() {
+          sl = new ServiceLocator();
+          sl.logger = new Logger();
+      }
+
+      function tearDown() {
+          var canvas = document.getElementById('canvas');
+          if (canvas) {
+            document.body.removeChild(canvas);
+          }
+
+          sl = null;
+      }
+
+      function testConstructorWrongArguments() {
+        try {
+            new Canvas();
+        } catch (error) {
+            assertEquals(new Error('ArgumentError').toString(), error.toString());
+        }
+      }
+      
+      function testConstructorCreatesCanvasElementIfNecessary() {
+          // precondition - canvas does not exist
+          assertNull(document.getElementById('canvas'));
+
+          var canvas = new Canvas(document);
+          // postcondition canvas element exists and is of a correct type
+          assertNotNull(document_canvas = document.getElementById('canvas'));
+          assert(document_canvas instanceof HTMLCanvasElement);
+      }
+
+      function testConstructorMakesUseOfExistingCanvasElement() {
+          var existing_htmlCanvas;
+          
+          if(! (existing_htmlCanvas = document.getElementById('canvas'))) {
+              existing_htmlCanvas = document.createElement('canvas');
+              existing_htmlCanvas.id = 'canvas';
+              document.body.appendChild(existing_htmlCanvas);
+          }
+
+          var canvas = new Canvas(document);
+
+          assertObjectEquals(canvas.htmlCanvas, existing_htmlCanvas);
+      }
+
+      function testGetContext() {
+          assert('This method is simply delegated.', true);
+      }
+      
+      function testAddFigure() {
+          var figure1 = new Figure();
+          var figure2 = new Figure();
+
+          var canvas = new Canvas(document);
+
+          canvas.addFigure(figure1);
+          canvas.addFigure(figure2);
+
+          var figures = canvas.getFigures();
+
+          assertTrue(figures.find(figure1) >= 0);
+          assertTrue(figures.find(figure2) >= 0);
+      }
+
+      function testRemoveFigure() {
+          var figure1 = new Figure();
+          var figure2 = new Figure();
+
+          var canvas = new Canvas(document);
+
+          canvas.addFigure(figure1);
+          canvas.addFigure(figure2);
+
+          canvas.removeFigure(figure1);
+
+          var figures = canvas.getFigures();
+
+          assertFalse(figures.find(figure1));
+          assertTrue(figures.find(figure2) >= 0);
+      }
+
+      function testGetSelectedFigures() {
+        var canvas  = new Canvas(document);
+        var figure1 = new Figure();
+        var figure2 = new Figure();
+
+        figure1.setSelected(false);
+        figure2.setSelected(true);
+        canvas.addFigure(figure1);
+        canvas.addFigure(figure2);
+
+        assertEquals(canvas.getSelectedFigures()[0], figure2);
+      }
+
+      function testFigureAtPoint() {
+          var mc = new MockControl();
+          var testPoint = new Point(10,10);
+          
+          var canvas = new Canvas(document);
+          var figureOverThePoint = mc.createMock(Figure.prototype);
+          figureOverThePoint.expects().touches(testPoint).andReturn(true);
+          var figureNotOverThePoint = mc.createMock(Figure.prototype);
+          figureNotOverThePoint.expects().touches(testPoint).andReturn(false);
+
+          canvas.addFigure(figureNotOverThePoint);
+          canvas.addFigure(figureOverThePoint);
+
+          assertEquals(figureOverThePoint, canvas.figureAtPoint(testPoint));
+      }
+
+      function testSetColor() {
+          var canvas = new Canvas(document);
+          var color  = '#123456';
+
+          canvas.setColor(color);
+
+          assertEquals(canvas.ctx.fillStyle, color);
+          assertEquals(canvas.ctx.strokeStyle, color);
+      }
+
+      function testStrokeRect() {
+          assert('This method is simply delegated.', true);
+      }
+
+      function testFillRect() {
+          assert('This method is simply delegated', true);
+      }
+
+      function testLine() {
+          var canvas = new Canvas(document);
+          var mc = new MockControl();
+          var start = new Point(10,20);
+          var end   = new Point(30,40);
+          
+          canvas.ctx = mc.createMock({
+            beginPath: function() {},
+            moveTo:    function() {},
+            lineTo:    function() {},
+            stroke:    function() {},
+          });
+          canvas.ctx.expects().beginPath();
+          canvas.ctx.expects().moveTo(start.getX(), start.getY());
+          canvas.ctx.expects().lineTo(end.getX(), end.getY());
+          canvas.ctx.expects().stroke();
+
+          canvas.drawLine(start.getX(), start.getY(), end.getX(), end.getY());
+
+          mc.verify();
+      }
+
+      function testRepaint() {
+          var mockControl = new MockControl();
+          var figureMock1 = mockControl.createMock(Figure.prototype);
+          var figureMock2 = mockControl.createMock(Figure.prototype);
+
+          var canvas = new Canvas(document);
+
+          canvas.addFigure(figureMock1);
+          canvas.addFigure(figureMock2);
+
+          figureMock1.expects().paint();
+          figureMock2.expects().paint();
+
+          canvas.repaint();
+
+          mockControl.verify();
+      }
+
+      function testClear() {
+          var startPoint = new Point(10,20);
+          var endPoint   = new Point(50,60);
+
+          var mc = new MockControl();
+          var ctxMock = mc.createMock({
+                        clearRect: function() {},
+                    });
+          ctxMock.expects().clearRect(startPoint.getX(), startPoint.getY(),
+                                  endPoint.getX(), endPoint.getY());
+
+
+          Canvas.prototype.getContext = function() {return ctxMock};
+          var canvas = new Canvas(document);
+          // make getContext() to return ctxMock
+
+          canvas.clear(startPoint, endPoint);
+
+          mc.verify()
+      }
+
+      function testClearAll() {
+          // we need to create a partial mock
+          // to do this we create a mock of a canvas and a real one
+          // then assign function clear from a mock to clear on a genuine object
+          var canvas = new Canvas(document);
+
+          var mc = new MockControl();
+          var canvasMock = mc.createMock(Canvas.prototype);
+          canvasMock.htmlCanvas = new Object();
+          canvasMock.htmlCanvas.width  = 100;
+          canvasMock.htmlCanvas.height = 200;
+          canvasMock.clearAll = canvas.clearAll;
+          canvasMock.expects().clear(new Point(0,0),new Point(canvasMock.htmlCanvas.width,canvasMock.htmlCanvas.height));
+
+          canvasMock.clearAll();
+
+          mc.verify();
+      }
+
+      function testActivateEventHandlers() {
+          var mc = new MockControl();
+
+          var htmlCanvasMock = mc.createMock({
+              addEventListener: function() {},
+          });
+
+          var canvas = new Canvas(document);
+          canvas.htmlCanvas = htmlCanvasMock;
+
+          htmlCanvasMock.expects().addEventListener('mousedown',canvas.eventHandler, false);
+          htmlCanvasMock.expects().addEventListener('mouseup',canvas.eventHandler, false);
+
+          canvas.activateEventHandlers();
+
+          mc.verify();
+      }
+
+      function testEventHandler() {
+          sl.canvas = new Canvas(document);
+
+          sl.canvas.tool = null;
+
+          var eventHandler = sl.canvas.eventHandler;
+          
+          // test that it does not throw an error if tool is null
+          var oEvent = new Object();
+          eventHandler(oEvent);
+
+          // test that it does not throw an error if tool method for current
+          // event does not exist
+          oEvent.type = 'click';
+          sl.canvas.tool = new Object();
+          eventHandler(oEvent);
+
+          // test that correct event method in the tool is called
+          var mc = new MockControl()
+          oEvent.type = 'mousedown';
+          sl.canvas.tool = mc.createMock({
+              mousedown: function() {},
+          });
+          sl.canvas.tool.expects().mousedown(oEvent);
+          eventHandler(oEvent);
+          mc.verify();
+      }
+
+  </script>
+
+ </body>
+</html>
+

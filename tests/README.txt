@@ -1,0 +1,2 @@
+-no tests for setters and getters
+-empty tests for methods simply delegating

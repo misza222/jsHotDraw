@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+ <head>
+  <title>Test Figure class</title>
+  <script language="javascript" src="jsunit/app/jsUnitCore.js"></script>
+  <script language="javascript" src="jsmock/jsmock.js"></script>
+  <script language="javascript" src="../util.js"></script>
+  <script language="javascript" src="../Figure.js"></script>
+  <script language="javascript" src="../Handle.js"></script>
+  <script language="javascript" src="../LocatorHandle.js"></script>
+ </head>
+ <body>
+  <script language="javascript">
+
+      function testConstructor() {
+        var figure = new Figure();
+
+        assertFalse(figure.isSelected());
+      }
+
+      function testAddHandle() {
+          assert('This method is simply delegated.', true);
+      }
+
+      function testPaint() {
+
+          var mockControl = new MockControl();
+          var handleMock = mockControl.createMock(LocatorHandle.prototype);
+          var figure = new Figure();
+          // we need to override doPaint to avoid throwing 'AbstractMethod' error
+          // TODO: test that paint actually calls doPaint
+          figure.doPaint = function() {};
+          figure.addHandle(handleMock);
+
+          // this mock should register one call to paint()
+          handleMock.expects().paint();
+
+          // this time it should not call paint() - call cound is 0
+          figure.setSelected(false);
+          figure.paint();
+
+          // now it should be called
+          figure.setSelected(true);
+          figure.paint();
+
+          mockControl.verify();
+      }
+
+      function testSetGetColor() {
+          var figure = new Figure();
+          var color1  = '#000000';
+          var color2  = '#000001';
+          figure.setColor(color1);
+          assertTrue(figure.getColor() === color1);
+          figure.setColor(color2);
+          assertTrue(figure.getColor() === color2);
+      }
+
+      function testGetSelectedHandle() {
+          var canvas = new Object();
+          
+          var figure = new Figure();
+          var handleSelected = new LocatorHandle(canvas, figure, new Point(10, 10));
+          handleSelected.setSelected(true);
+          var handleNotSelected = new LocatorHandle(canvas, figure, new Point(10, 20));
+
+          figure.addHandle(handleSelected);
+          figure.addHandle(handleNotSelected);
+
+          assertEquals(figure.getSelectedHandle(), handleSelected);
+      }
+
+      function testHandleAtPoint() {
+          var mc = new MockControl();
+          
+          var point  = new Point(10,10);
+
+          var figure = new Figure();
+          var handle = mc.createMock(LocatorHandle.prototype);
+          handle.expects().touches(point).andReturn(true);
+          figure.addHandle(handle);
+
+          figure.handleAtPoint(point);
+
+          mc.verify();
+      }
+
+      function testSetLocation() {
+          var figure = new Figure();
+          var abstractError = null;
+
+          try {
+              figure.setLocation(new Point(0,0));
+          } catch (error) {
+              abstractError = error;
+          }
+          assertEquals(abstractError.toString(), new Error('AbstractMethod').toString());
+      }
+
+      function testGetLocation() {
+          var figure = new Figure();
+          var abstractError = null;
+
+          try {
+              figure.getLocation(new Point(0,0));
+          } catch (error) {
+              abstractError = error;
+          }
+          assertEquals(abstractError.toString(), new Error('AbstractMethod').toString());
+      }
+
+      function testGetBounds() {
+          var figure = new Figure();
+          var abstractError = null;
+
+          try {
+              figure.getBounds();
+          } catch (error) {
+              abstractError = error;
+          }
+          assertEquals(abstractError.toString(), new Error('AbstractMethod').toString());
+      }
+
+      function testUpdate() {
+          var figure = new Figure();
+          var abstractError = null;
+
+          try {
+              figure.update(new Object());
+          } catch (error) {
+              abstractError = error;
+          }
+          assertEquals(abstractError.toString(), new Error('AbstractMethod').toString());
+      }
+
+  </script>
+
+ </body>
+</html>
+

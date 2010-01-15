@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+ <head>
+  <title>Test Rectangle class</title>
+  <script language="javascript" src="jsunit/app/jsUnitCore.js"></script>
+  <script language="javascript" src="jsmock/jsmock.js"></script>
+  <script language="javascript" src="../util.js"></script>
+  <script language="javascript" src="../Figure.js"></script>
+  <script language="javascript" src="../Handle.js"></script>
+  <script language="javascript" src="../LocatorHandle.js"></script>
+  <script language="javascript" src="../RectangleFigure.js"></script>
+  <script language="javascript" src="../Canvas.js"></script>
+ </head>
+ <body>
+  <script language="javascript">
+
+      function testConstructor() {
+          var canvas = new Canvas(document);
+          var centre = new Point(50,60);
+          var width   = 100;
+          var height  = 200;
+          var rect = new RectangleFigure(canvas, centre, width, height);
+
+          assertEquals(rect.canvas, canvas);
+          assertEquals(rect.x, centre.getX() - width / 2 );
+          assertEquals(rect.y, centre.getY() - height / 2);
+          assertEquals(rect.width, width);
+          assertEquals(rect.height, height);
+      }
+
+      function testConstructorWrongArguments()
+      {
+          var constructorError = null;
+          try {
+            new RectangleFigure();
+          } catch (error) {
+            constructorError = error;
+          }
+
+          assertEquals(new Error('ArgumentError').toString(), constructorError.toString());
+      }
+
+      function testDoPaint() {
+          var mockControl = new MockControl();
+          var canvasMock = mockControl.createMock(Canvas.prototype);
+          var centre = new Point(10, 20);
+          var width = 100;
+          var height= 200;
+          var rect = new RectangleFigure(canvasMock, centre, width, height);
+
+          canvasMock.expects().setColor(rect.getColor());
+          canvasMock.expects().strokeRect(rect.x,rect.y,width,height);
+
+          rect.doPaint();
+
+          mockControl.verify();
+      }
+
+      function testTouches() {
+          var canvas = new Canvas(document);
+          var rect = new RectangleFigure(canvas, new Point(0, 0), 100, 100);
+
+          var callCount = 0;
+          Geometry.linePointIntersect = function() {
+              callCount++;
+              return false;
+          };
+
+          assertFalse(rect.touches(new Point(10,0)));
+
+          // TODO: Tests what is passed to the Geometry.linePointIntersect not
+          // only the callCount
+          assertEquals(callCount, 4);
+      }
+
+      function testSetLocation() {
+          var canvas = new Canvas(document);
+          var rect   = new RectangleFigure(canvas,new Point(0,0),10,10);
+          rect.setLocation(new Point(20,20));
+
+          assertEquals(rect.x, 15);
+          assertEquals(rect.y, 15);
+      }
+
+      function testGetLocation() {
+          var canvas = new Canvas(document);
+          var centre = new Point(100,150);
+          var rect = new RectangleFigure(canvas, centre, 40, 40);
+
+          assertEquals(rect.getLocation().toString(), centre.toString());
+      }
+
+      function testGetBounds() {
+          var canvas = new Canvas(document);
+          var centre = new Point(100, 150);
+          var width  = 40;
+          var height = 50;
+          var rect = new RectangleFigure(canvas, centre, width, height);
+
+          var expectedBounds = new Rectangle(centre, width, height);
+
+          assertEquals(rect.getBounds().toString(), expectedBounds.toString());
+      }
+
+  </script>
+
+ </body>
+</html>
+
