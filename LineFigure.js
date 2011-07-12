@@ -24,7 +24,7 @@ LineFigure.prototype = new Figure();
 LineFigure.prototype.doPaint = function() {
     this.canvas.setColor(this.getColor());
     this.canvas.drawLine(this.start.getX(), this.start.getY(), this.end.getX(), this.end.getY());
-}
+};
 
 LineFigure.prototype.touches = function(testPoint) {
 
@@ -45,7 +45,7 @@ LineFigure.prototype.setLocation = function(point) {
 
 LineFigure.prototype.getLocation = function() {
     return this.mid;
-}
+};
 
 LineFigure.prototype.getBounds = function() {
     return new Rectangle(this.mid, this.end.getX() - this.start.getX(), this.end.getY() - this.start.getY());
@@ -53,5 +53,5 @@ LineFigure.prototype.getBounds = function() {
 
 LineFigure.prototype.toString = function() {
     return 'LineFigure:' + this.start + '@' + this.end;
-}
+};
 

@@ -125,7 +125,7 @@ Figure.prototype.getLocation = function() {
  */
 Figure.prototype.getBounds = function() {
     throw new Error('AbstractMethod');
-}
+};
 
 Figure.prototype.update = function(observable) {
     throw new Error('AbstractMethod');

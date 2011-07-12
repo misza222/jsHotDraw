@@ -54,7 +54,7 @@ Observable.prototype.notify = function() {
     for (var i = 0; this.observers[i]; i++) {
         this.observers[i].update(this);
     }
-}
+};
 
 function Point(x,y) {
     if (x === undefined || y === undefined) {

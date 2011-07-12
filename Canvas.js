@@ -117,7 +117,7 @@ Canvas.prototype.setTool = function(tool) {
 
 Canvas.prototype.getTool = function() {
     return this.tool;
-}
+};
 
 /*
  * Some event handlers are registered here but others may be registered within
@@ -129,7 +129,7 @@ Canvas.prototype.activateEventHandlers = function()
 {
     this.htmlCanvas.addEventListener('mousedown', this.eventHandler, false);
     this.htmlCanvas.addEventListener('mouseup', this.eventHandler, false);
-}
+};
 
 /*
  * This method is called from outside of the context of the canvas object
@@ -142,4 +142,4 @@ Canvas.prototype.eventHandler = function(oEvent)
     if(tool && tool[func]) {
         tool[func](oEvent);
     }
-}
+};

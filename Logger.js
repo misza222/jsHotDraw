@@ -10,7 +10,7 @@ function Logger() {
     document.body.appendChild(this.logger);
 
     // initialize log levels
-    var i = 0
+    var i = 0;
     Logger.DEBUG = i++;
     Logger.ERROR = i++;
 }
@@ -20,7 +20,8 @@ Logger.prototype.log = function(msg, log_level) {
     if (! log_level) {
         log_level = Logger.DEBUG;
     }
-    this.logger.value = this.formatDate(now) +  ":" + msg + "\n" + this.logger.value;
+    this.logger.value = this.formatDate(now) +  ":" + msg + 
+	"\n" + this.logger.value;
 };
 
 Logger.prototype.formatDate = function(date)

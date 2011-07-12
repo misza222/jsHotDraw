@@ -17,7 +17,7 @@ function init() {
     
     sl.canvas.addFigure(line);
     sl.canvas.addFigure(rect);
-    sl.canvas.repaint()
+    sl.canvas.repaint();
 
     var st = new SelectionTool(sl.canvas);
     sl.canvas.setTool(st);
