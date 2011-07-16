@@ -109,7 +109,7 @@ Rectangle.prototype.grow = function(x,y) {
     this.width  += x;
     this.height += y;
 };
-Point.prototype.toString = function() {
+Rectangle.prototype.toString = function() {
     return "Rectangle:(" + this.getX() + "," + this.getY() + ")@(" + this.getX() + this.width + "," + this.getY() + this.height + ")";
 };
 

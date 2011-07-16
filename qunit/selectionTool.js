@@ -1,4 +1,15 @@
-module("selectionTool");
+module("selectionTool", {
+  teardown: function() {
+    var canvas = document.getElementById('canvas');
+    if (canvas) {
+        document.body.removeChild(canvas);
+    }
+
+    sl = null;
+  }
+});
+
+var sl = null;
 
 test("constructor", function() {
     try {
@@ -7,7 +18,7 @@ test("constructor", function() {
         equal(new Error('ArgumentError').toString(), error.toString());
     }
 
-    new SelectionTool(new Canvas(document));
+    new SelectionTool(new Object());
 });
 
 test("mouseDown", function() {
