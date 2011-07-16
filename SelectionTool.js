@@ -1,7 +1,6 @@
 /*
- * Tool class
+ * SelectionTool
  *
- * Base class for all the different tools
  */
 
 function SelectionTool(canvas) {
