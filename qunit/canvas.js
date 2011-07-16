@@ -197,14 +197,6 @@ test("ClearAll", function() {
     mc.verify();
 });
 
-test("Testing the test", function() {
-  var mc = new MockControl();
-  var canvas = mc.createMock(Canvas.prototype);
-  canvas.expects().clear(new Point(0,0), new Point(1,1));
-  canvas.clear(new Point(0,0), new Point(1,1));
-  mc.verify();
-});
-
 test("ActivateEventHandlers", function() {
     var mc = new MockControl();
 
